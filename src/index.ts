@@ -3,6 +3,24 @@ import express, {Request, Response} from 'express'
 import cors from 'cors'
 import {Bot, Context} from 'grammy'
 
+const data = {
+  'Тип_квадроцикла': 'Спортивный квадроцикл',
+  'Вид_двигателя': 'Бензин',
+  'Мощность': '300',
+  'Тип_двигателя': 'Не имеет значения, - главное надежность',
+  'Трансмисиия': 'Нет, достаточно заднего привода.',
+  'Какой_бюджет_вы_рассматриваете_рублей': '150000',
+  'Бренды_да_или_нет': 'Нет, главное надежный.',
+  'Когда_покупка': 'Через 2-3 месяца',
+  Name: 'Мокин Сергей',
+  'Какой_мессенджер': 'Telegram',
+  Telegram: 'Указать номер телефона',
+  'Telegram_номер': '+79920180795',
+  tranid: '14182251:8034996173',
+  formid: 'form1318360581',
+  formname: 'Подбор холодильника'
+}
+
 const app = express()
 app.use(
   cors({
@@ -20,6 +38,8 @@ app.post('/tilda-webhook-catalog-spectehniki', async (req: Request, res: Respons
   const lead = req.body
 
   console.log('NEW LEAD:', lead)
+  console.log(req.body)
+
   const leadData = Object.entries(lead)
     .map(([key, value], index) => {
       const formatted = `<b>${key?.at(0)?.toUpperCase() + key.slice(1)}:</b> — ${value}`;
@@ -35,7 +55,7 @@ app.post('/tilda-webhook-catalog-spectehniki', async (req: Request, res: Respons
 ${leadData}
   `
 
-  await bot.api.sendMessage('1422316270', message, {
+  await bot.api.sendMessage('-1003577775601', message, {
     parse_mode: 'HTML'
   })
 
@@ -44,6 +64,10 @@ ${leadData}
 
 bot.command('start', async (ctx: Context) => {
   return await ctx.reply('Working!')
+})
+
+bot.command('chatid', async (ctx) => {
+  await ctx.reply(`chat id: ${ctx.chat.id}`)
 })
 
 const PORT = Number(process.env.PORT) || 3004
