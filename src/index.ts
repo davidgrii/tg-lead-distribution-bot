@@ -74,4 +74,4 @@ app.listen(PORT, () => {
 })
 
 
-bot.start()
+// bot.start()
