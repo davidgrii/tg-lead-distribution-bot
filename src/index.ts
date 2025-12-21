@@ -39,6 +39,16 @@ const CHANNELS = [
   Number(process.env.CHANNEL_PART_2),
 ]
 
+const CHANNELS_SNEGOHOD = [
+  Number(process.env.CHANNEL_SNEGOHOD_PART_1),
+  Number(process.env.CHANNEL_SNEGOHOD_PART_2),
+]
+
+const CHANNELS_MINITRAKKTORY = [
+  Number(process.env.CHANNEL_MINITRAKKTORY_PART_1),
+  Number(process.env.CHANNEL_MINITRAKKTORY_PART_2),
+]
+
 let channelIndexSpectehniki = 0
 let channelIndexSnegohody = 0
 let channelIndexMinitraktory = 0
@@ -91,11 +101,11 @@ app.post('/tilda-webhook-xlkja-snegohody', async (req: Request, res: Response) =
 ${leadData}
   `
 
-  await bot.api.sendMessage(CHANNELS[channelIndexSnegohody], message, {
+  await bot.api.sendMessage(CHANNELS_SNEGOHOD[channelIndexSnegohody], message, {
     parse_mode: 'HTML',
   })
 
-  channelIndexSnegohody = (channelIndexSnegohody + 1) % CHANNELS.length
+  channelIndexSnegohody = (channelIndexSnegohody + 1) % CHANNELS_SNEGOHOD.length
   res.sendStatus(200)
 })
 
@@ -119,16 +129,16 @@ app.post('/tilda-webhook-brwio-minitraktory', async (req: Request, res: Response
 ${leadData}
   `
 
-  await bot.api.sendMessage(CHANNELS[channelIndexMinitraktory], message, {
+  await bot.api.sendMessage(CHANNELS_MINITRAKKTORY[channelIndexMinitraktory], message, {
     parse_mode: 'HTML',
   })
 
-  channelIndexMinitraktory = (channelIndexMinitraktory + 1) % CHANNELS.length
+  channelIndexMinitraktory = (channelIndexMinitraktory + 1) % CHANNELS_MINITRAKKTORY.length
   res.sendStatus(200)
 })
 
-// bot.command('start', async (ctx: Context) => {
-//   return await ctx.reply('Working!')
+// bot.command('chatid', async (ctx: Context) => {
+//   return await ctx.reply(ctx.chat?.id)
 // })
 
 const PORT = Number(process.env.PORT) || 3004
