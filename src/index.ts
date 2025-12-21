@@ -39,12 +39,14 @@ const CHANNELS = [
   Number(process.env.CHANNEL_PART_2),
 ]
 
-let channelIndex = 0
+let channelIndexSpectehniki = 0
+let channelIndexSnegohody = 0
+let channelIndexMinitraktory = 0
 
 app.post('/tilda-webhook-catalog-spectehniki', async (req: Request, res: Response) => {
   const lead = req.body
 
-  console.log('NEW LEAD:', lead)
+  console.log('NEW LEAD spectehniki:', lead)
 
   const leadData = Object.entries(lead)
     .map(([key, value], index) => {
@@ -61,11 +63,67 @@ app.post('/tilda-webhook-catalog-spectehniki', async (req: Request, res: Respons
 ${leadData}
   `
 
-  await bot.api.sendMessage(CHANNELS[channelIndex], message, {
+  await bot.api.sendMessage(CHANNELS[channelIndexSpectehniki], message, {
     parse_mode: 'HTML',
   })
 
-  channelIndex = (channelIndex + 1) % CHANNELS.length
+  channelIndexSpectehniki = (channelIndexSpectehniki + 1) % CHANNELS.length
+  res.sendStatus(200)
+})
+
+app.post('/tilda-webhook-xlkja-snegohody', async (req: Request, res: Response) => {
+  const lead = req.body
+
+  console.log('NEW LEAD snegohody:', lead)
+
+  const leadData = Object.entries(lead)
+    .map(([key, value], index) => {
+      const formatted = `<b>${key?.at(0)?.toUpperCase() + key.slice(1)}:</b> — ${value}`;
+      return (index + 1) % 3 === 0 ? formatted + '\n' : formatted;
+    })
+    .join('\n');
+
+  const message = `
+  ❗️ <b>Получена новая заявка:</b> ❗️ 
+    
+<b>От:</b> <code>${req.host}</code>
+  
+${leadData}
+  `
+
+  await bot.api.sendMessage(CHANNELS[channelIndexSnegohody], message, {
+    parse_mode: 'HTML',
+  })
+
+  channelIndexSnegohody = (channelIndexSnegohody + 1) % CHANNELS.length
+  res.sendStatus(200)
+})
+
+app.post('/tilda-webhook-brwio-minitraktory', async (req: Request, res: Response) => {
+  const lead = req.body
+
+  console.log('NEW LEAD minitraktory:', lead)
+
+  const leadData = Object.entries(lead)
+    .map(([key, value], index) => {
+      const formatted = `<b>${key?.at(0)?.toUpperCase() + key.slice(1)}:</b> — ${value}`;
+      return (index + 1) % 3 === 0 ? formatted + '\n' : formatted;
+    })
+    .join('\n');
+
+  const message = `
+  ❗️ <b>Получена новая заявка:</b> ❗️ 
+    
+<b>От:</b> <code>${req.host}</code>
+  
+${leadData}
+  `
+
+  await bot.api.sendMessage(CHANNELS[channelIndexMinitraktory], message, {
+    parse_mode: 'HTML',
+  })
+
+  channelIndexMinitraktory = (channelIndexMinitraktory + 1) % CHANNELS.length
   res.sendStatus(200)
 })
 
