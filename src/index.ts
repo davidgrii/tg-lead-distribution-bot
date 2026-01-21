@@ -1,27 +1,15 @@
 import 'dotenv/config'
 import express, {Request, Response} from 'express'
 import cors from 'cors'
-import {Bot} from 'grammy'
-
-// const data = {
-//   'Тип_квадроцикла': 'Спортивный квадроцикл',
-//   'Вид_двигателя': 'Бензин',
-//   'Мощность': '300',
-//   'Тип_двигателя': 'Не имеет значения, - главное надежность',
-//   'Трансмисиия': 'Нет, достаточно заднего привода.',
-//   'Какой_бюджет_вы_рассматриваете_рублей': '150000',
-//   'Бренды_да_или_нет': 'Нет, главное надежный.',
-//   'Когда_покупка': 'Через 2-3 месяца',
-//   Name: 'Мокин Сергей',
-//   'Какой_мессенджер': 'Telegram',
-//   Telegram: 'Указать номер телефона',
-//   'Telegram_номер': '+79920180795',
-//   tranid: '14182251:8034996173',
-//   formid: 'form1318360581',
-//   formname: 'Подбор холодильника'
-// }
+import {Bot, Context, InputFile} from 'grammy'
+import connectDB from "./db.js";
+import ClientModel from "./models/client.model.js";
+import type {ISpectechnikiRequest} from "./types.js";
+import ClientsModel from "./models/client.model.js";
 
 const app = express()
+const PORT = Number(process.env.PORT) || 3004
+
 app.use(
   cors({
     origin: [
@@ -34,7 +22,7 @@ app.use(express.json())
 
 const bot = new Bot(process.env.BOT_TOKEN!)
 
-const CHANNELS = [
+const CHANNELS_SPECTECHNIKI = [
   Number(process.env.CHANNEL_PART_1),
   Number(process.env.CHANNEL_PART_2),
 ]
@@ -54,7 +42,27 @@ let channelIndexSnegohody = 0
 let channelIndexMinitraktory = 0
 
 app.post('/tilda-webhook-catalog-spectehniki', async (req: Request, res: Response) => {
-  const lead = req.body
+  const lead = req.body as ISpectechnikiRequest
+
+  const contactMethod = lead.Telegram && 'Telegram' || lead.WhatsApp && 'WhatsApp' || 'Телефон'
+  const contactPhone = lead?.Телефон || lead?.Telegram_номер || lead?.WhatsApp || ''
+  const telegramUsername = lead?.Telegram_username || ''
+
+  const client = await ClientsModel.findOne({
+    $or: [
+      { phone: contactPhone },
+      { telegram_username: telegramUsername },
+    ]
+  })
+
+  if (!client) {
+    await ClientModel.create({
+      name: lead.Name,
+      contact_method: contactMethod,
+      phone: contactPhone,
+      telegram_username: telegramUsername,
+    })
+  }
 
   console.log('NEW LEAD spectehniki:', lead)
 
@@ -73,11 +81,11 @@ app.post('/tilda-webhook-catalog-spectehniki', async (req: Request, res: Respons
 ${leadData}
   `
 
-  await bot.api.sendMessage(CHANNELS[channelIndexSpectehniki], message, {
+  await bot.api.sendMessage(CHANNELS_SPECTECHNIKI[channelIndexSpectehniki], message, {
     parse_mode: 'HTML',
   })
 
-  channelIndexSpectehniki = (channelIndexSpectehniki + 1) % CHANNELS.length
+  channelIndexSpectehniki = (channelIndexSpectehniki + 1) % CHANNELS_SPECTECHNIKI.length
   res.sendStatus(200)
 })
 
@@ -137,14 +145,45 @@ ${leadData}
   res.sendStatus(200)
 })
 
-// bot.command('chatid', async (ctx: Context) => {
-//   return await ctx.reply(ctx.chat?.id)
-// })
+// COMMANDS
 
-const PORT = Number(process.env.PORT) || 3004
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`)
+bot.command('start', async (ctx: Context) => {
+  return await ctx.reply('Working')
 })
 
+bot.command('clients', async (ctx) => {
+  const clients = await ClientModel.find()
 
-// bot.start()
+  const header = 'Name;Contact Method;Phone;Telegram Username\n'
+  const rows = clients.map(c =>
+    `${c.name};${c.contact_method};${c.phone};${c.telegram_username}`
+  ).join('\n')
+
+  const csv = '\uFEFF' + header + rows
+
+  await ctx.replyWithDocument(
+    new InputFile(
+      Buffer.from(csv, 'utf-8'),
+      'clients.csv'
+    )
+  )
+})
+
+bot.command('chatid', async (ctx: Context) => {
+  const chatId = String(ctx.chat?.id) || ''
+
+  return await ctx.reply(chatId)
+})
+
+// - // - // - // - //
+
+const startApp = async () => {
+  await connectDB()
+  bot.start()
+}
+
+startApp().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`)
+  })
+})

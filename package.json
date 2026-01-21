@@ -16,7 +16,8 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "grammy": "^1.38.4"
+    "grammy": "^1.38.4",
+    "mongoose": "^9.1.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
