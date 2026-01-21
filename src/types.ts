@@ -2,7 +2,7 @@ export interface IClientModel {
   name: string
   contact_method: TMessenger
   phone?: string
-  telegram_username?: string
+  telegram_username: string
 }
 
 export interface ISpectechnikiRequest {

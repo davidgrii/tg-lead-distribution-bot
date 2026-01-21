@@ -43,20 +43,24 @@ let channelIndexMinitraktory = 0
 
 app.post('/tilda-webhook-catalog-spectehniki', async (req: Request, res: Response) => {
   const lead = req.body as ISpectechnikiRequest
+  const orConditions = []
 
   const contactMethod = lead.Telegram && 'Telegram' || lead.WhatsApp && 'WhatsApp' || 'Телефон'
   const contactPhone = lead?.Телефон || lead?.Telegram_номер || lead?.WhatsApp || ''
   const telegramUsername = lead?.Telegram_username || ''
 
+  if (contactPhone !== '') {
+    orConditions.push({ phone: contactPhone })
+  } else {
+    orConditions.push({ telegram_username: telegramUsername })
+  }
+
   const client = await ClientsModel.findOne({
-    $or: [
-      { phone: contactPhone },
-      { telegram_username: telegramUsername },
-    ]
+    $or: orConditions
   })
 
   if (!client) {
-    await ClientModel.create({
+    await ClientsModel.create({
       name: lead.Name,
       contact_method: contactMethod,
       phone: contactPhone,
