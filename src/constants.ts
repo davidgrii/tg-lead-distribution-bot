@@ -7,23 +7,38 @@ export const TG_CHANNEL_URL = 'https://t.me/coninsfolio'
 
 export const DATABASE_URL = process.env.DB_URL
 
-export const ADMIN_USER_ID = process.env.ADMIN_USER_ID
+export const ADMIN_IDS = process.env.ADMIN_IDS
 export const WEB_APP_URL = process.env.WEB_URL
 
+export const CHANNELS_SPECTECHNIKI = [
+  Number(process.env.CHANNEL_PART_1),
+  Number(process.env.CHANNEL_PART_2)
+]
+
+export const CHANNELS_SNEGOHOD = [
+  Number(process.env.CHANNEL_SNEGOHOD_PART_1),
+  Number(process.env.CHANNEL_SNEGOHOD_PART_2)
+]
+
+export const CHANNELS_MINITRAKKTORY = [
+  Number(process.env.CHANNEL_MINITRAKKTORY_PART_1),
+  Number(process.env.CHANNEL_MINITRAKKTORY_PART_2)
+]
+
 const data = {
-  "Тип_квадроцикла": "Спортивный квадроцикл",
-  "Вид_двигателя": "Бензин",
-  "Мощность": "300",
-  "Тип_двигателя": "Не имеет значения, - главное надежность",
-  "Трансмисиия": "Нет, достаточно заднего привода.",
-  "Какой_бюджет_вы_рассматриваете_рублей": "150000",
-  "Бренды_да_или_нет": "Нет, главное надежный.",
-  "Когда_покупка": "Через 2-3 месяца",
-  "Name": "Мокин Сергей",
-  "Какой_мессенджер": "Telegram",
-  "Telegram": "Указать номер телефона",
-  "Telegram_номер": "+79920180795",
-  "tranid": "14182251:8034996173",
-  "formid": "form1318360581",
-  "formname": "Подбор холодильника"
+  Тип_квадроцикла: 'Спортивный квадроцикл',
+  Вид_двигателя: 'Бензин',
+  Мощность: '300',
+  Тип_двигателя: 'Не имеет значения, - главное надежность',
+  Трансмисиия: 'Нет, достаточно заднего привода.',
+  Какой_бюджет_вы_рассматриваете_рублей: '150000',
+  Бренды_да_или_нет: 'Нет, главное надежный.',
+  Когда_покупка: 'Через 2-3 месяца',
+  Name: 'Мокин Сергей',
+  Какой_мессенджер: 'Telegram',
+  Telegram: 'Указать номер телефона',
+  Telegram_номер: '+79920180795',
+  tranid: '14182251:8034996173',
+  formid: 'form1318360581',
+  formname: 'Подбор холодильника'
 }
