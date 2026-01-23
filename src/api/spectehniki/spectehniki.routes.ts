@@ -12,7 +12,7 @@ let channelIndexSpectehniki = 0
 router.post(
   '/tilda-webhook-catalog-spectehniki',
   async (req: Request, res: Response) => {
-    const lead = req.body as ISpectechnikiRequest
+    const lead = req.body
     const orConditions = []
 
     const contactMethod = getContactMethod(lead)
@@ -38,6 +38,7 @@ router.post(
     }
 
     console.log('NEW LEAD spectehniki:', lead)
+    console.log(lead?.payment?.products)
 
     const leadData = Object.entries(lead)
       .map(([key, value], index) => {
@@ -71,7 +72,8 @@ ${leadData}
 router.post(
   '/tilda-webhook-catalog-spectehniki-cart',
   async (req: Request, res: Response) => {
-    return res.sendStatus(200)
+
+    return     res.sendStatus(200)
 //     const lead = req.body as ISpectechnikiCartRequest
 //     const orConditions = []
 //
@@ -98,7 +100,6 @@ router.post(
 //     }
 //
 //     console.log('NEW LEAD spectehniki:', lead)
-//     console.log(lead?.payment?.products)
 //
 //     const leadData = Object.entries(lead)
 //       .map(([key, value], index) => {
