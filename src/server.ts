@@ -16,8 +16,9 @@ const PORT = Number(process.env.PORT) || 3004
 app.use(
   cors({
     origin: [
-      'http://localhost:3004',
-      'request-manager-jcb7.onrender.com',
+      '*',
+      // 'http://localhost:3004',
+      // 'request-manager-jcb7.onrender.com',
     ],
     credentials: true
   })
