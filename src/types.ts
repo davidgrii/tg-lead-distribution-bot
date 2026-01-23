@@ -1,3 +1,4 @@
+
 export interface IClientModel {
   name: string
   contact_method: TMessenger
@@ -5,7 +6,7 @@ export interface IClientModel {
   telegram_username: string
 }
 
-export interface ISpectechnikiRequest extends ILeadData{
+export interface ISpectechnikiRequest extends ILeadData {
   Тип_квадроцикла: string
   Вид_двигателя: string
   Мощность: string
@@ -13,6 +14,12 @@ export interface ISpectechnikiRequest extends ILeadData{
   Трансмисиия: string
   Какой_бюджет_вы_рассматриваете_рублей: string
   Бренды_да_или_нет: string
+}
+export interface ISpectechnikiCartRequest extends Omit<ILeadData, 'Когда_покупка' | 'tranid'> {
+  payment: {
+    products: any[]
+    amount: string
+  }
 }
 
 export interface ISnegohodyRequest extends ILeadData {
