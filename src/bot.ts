@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
-import { setupAdminCommands } from './commands/admin'
+import { setupAdminCommands } from './commands/admin.js'
 import { Bot } from 'grammy'
-import {setupStartCommands} from "./commands/start";
+import {setupStartCommands} from "./commands/start.js";
 
 dotenv.config()
 

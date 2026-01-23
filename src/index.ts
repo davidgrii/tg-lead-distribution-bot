@@ -2,10 +2,10 @@ import 'dotenv/config'
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import connectDB from './db.js'
-import type {IMinitraktoryRequest, ISnegohodyRequest, ISpectechnikiRequest} from './types'
-import ClientsModel from './models/client.model'
-import {CHANNELS_MINITRAKKTORY, CHANNELS_SNEGOHOD, CHANNELS_SPECTECHNIKI} from './constants'
-import {bot} from "./bot";
+import type {IMinitraktoryRequest, ISnegohodyRequest, ISpectechnikiRequest} from './types.js'
+import ClientsModel from './models/client.model.js'
+import {CHANNELS_MINITRAKKTORY, CHANNELS_SNEGOHOD, CHANNELS_SPECTECHNIKI} from './constants.js'
+import {bot} from "./bot.js";
 
 const app = express()
 const PORT = Number(process.env.PORT) || 3004
