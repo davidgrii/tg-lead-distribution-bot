@@ -97,7 +97,7 @@ router.post(
     }
 
     console.log('NEW LEAD spectehniki:', lead)
-    console.log(lead.payment.products)
+    console.log(lead?.payment?.products)
 
     const leadData = Object.entries(lead)
       .map(([key, value], index) => {
