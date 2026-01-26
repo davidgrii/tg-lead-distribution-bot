@@ -6,6 +6,16 @@ export interface IClientModel {
   telegram_username: string
 }
 
+export interface IClientModel {
+  message_id: string
+  channel_id: number
+
+  name: string
+  contact_method: TMessenger
+  phone?: string
+  telegram_username: string
+}
+
 export interface ISpectechnikiRequest extends ILeadData {
   Тип_квадроцикла: string
   Вид_двигателя: string
@@ -17,7 +27,12 @@ export interface ISpectechnikiRequest extends ILeadData {
 }
 export interface ISpectechnikiCartRequest extends Omit<ILeadData, 'Когда_покупка' | 'tranid'> {
   payment: {
-    products: any[]
+    products: {
+      name: string
+      quantity: number
+      amount: number
+      price: string
+    }[]
     amount: string
   }
 }
@@ -30,6 +45,17 @@ export interface ISnegohodyRequest extends ILeadData {
   Бюджет: string
   Бренды_да_или_нет: string
 }
+export interface ISnegohodyCartRequest extends Omit<ILeadData, 'Когда_покупка' | 'tranid'> {
+  payment: {
+    products: {
+      name: string
+      quantity: number
+      amount: number
+      price: string
+    }[]
+    amount: string
+  }
+}
 
 export interface IMinitraktoryRequest extends ILeadData {
   Вид_работ: string
@@ -38,6 +64,17 @@ export interface IMinitraktoryRequest extends ILeadData {
   Кабина: string
   Бюджет: string
   Бренды_да_или_нет: string
+}
+export interface IMinitraktoryCartRequest extends Omit<ILeadData, 'Когда_покупка' | 'tranid'> {
+  payment: {
+    products: {
+      name: string
+      quantity: number
+      amount: number
+      price: string
+    }[]
+    amount: string
+  }
 }
 
 export interface ILeadData {
