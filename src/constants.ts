@@ -15,7 +15,7 @@ export const CHANNELS_SPECTECHNIKI = [
   Number(process.env.CHANNEL_PART_2)
 ]
 
-export const CHANNELS_SNEGOHOD = [
+export const CHANNELS_SNEGOHODY = [
   Number(process.env.CHANNEL_SNEGOHOD_PART_1),
   Number(process.env.CHANNEL_SNEGOHOD_PART_2)
 ]

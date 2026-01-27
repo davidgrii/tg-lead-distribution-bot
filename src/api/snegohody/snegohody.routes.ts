@@ -1,9 +1,10 @@
 import {Request, Response, Router} from "express";
-import type {ISnegohodyCartRequest, ISnegohodyRequest, ISpectechnikiRequest} from "../../types.js";
+import type {ISnegohodyCartRequest, ISnegohodyRequest} from "../../types.js";
 import ClientsModel from "../../models/client.model.js";
 import {bot} from "../../bot.js";
-import {CHANNELS_SNEGOHOD, CHANNELS_SPECTECHNIKI} from "../../constants.js";
+import {CHANNELS_SNEGOHODY, CHANNELS_SPECTECHNIKI} from "../../constants.js";
 import {getContactMethod, getContactPhoneOrUsername} from "../../utils.js";
+import LeadsModel from "../../models/leads.model.js";
 
 const router = Router();
 
@@ -14,6 +15,8 @@ router.post(
   async (req: Request, res: Response) => {
     const lead = req.body as ISnegohodyRequest
     const orConditions = []
+
+    let channelId = CHANNELS_SNEGOHODY[channelIndexSnegohody]
 
     const contactMethod = getContactMethod(lead)
     const { contactPhone, telegramUsername } = getContactPhoneOrUsername(lead)
@@ -28,6 +31,10 @@ router.post(
       $or: orConditions
     })
 
+    const duplicatedLead = await LeadsModel.findOne({
+      $or: orConditions
+    })
+
     if (!client) {
       await ClientsModel.create({
         name: lead.Name,
@@ -35,6 +42,10 @@ router.post(
         phone: contactPhone,
         telegram_username: telegramUsername
       })
+    }
+
+    if (duplicatedLead) {
+      channelId = duplicatedLead.channel_id
     }
 
     console.log('NEW LEAD snegohody:', lead)
@@ -54,16 +65,28 @@ router.post(
 ${leadData}
   `
 
-    await bot.api.sendMessage(
-      CHANNELS_SNEGOHOD[channelIndexSnegohody],
+    const { message_id } = await bot.api.sendMessage(
+      channelId,
       message,
       {
         parse_mode: 'HTML'
       }
     )
 
-    channelIndexSnegohody =
-      (channelIndexSnegohody + 1) % CHANNELS_SNEGOHOD.length
+    if (!duplicatedLead) {
+      channelIndexSnegohody = (channelIndexSnegohody + 1) % CHANNELS_SPECTECHNIKI.length
+
+      await LeadsModel.create({
+        message_id: message_id,
+        channel_id: channelId,
+
+        name: lead.Name,
+        contact_method: contactMethod,
+        phone: contactPhone,
+        telegram_username: telegramUsername
+      })
+    }
+
     res.sendStatus(200)
   }
 )
@@ -73,6 +96,8 @@ router.post(
   async (req: Request, res: Response) => {
     const lead = req.body as ISnegohodyCartRequest
     const orConditions = []
+
+    let channelId = CHANNELS_SNEGOHODY[channelIndexSnegohody]
 
     const contactMethod = getContactMethod(lead)
     const { contactPhone, telegramUsername } = getContactPhoneOrUsername(lead)
@@ -87,6 +112,10 @@ router.post(
       $or: orConditions
     })
 
+    const duplicatedLead = await LeadsModel.findOne({
+      $or: orConditions
+    })
+
     if (!client) {
       await ClientsModel.create({
         name: lead.Name,
@@ -94,6 +123,10 @@ router.post(
         phone: contactPhone,
         telegram_username: telegramUsername
       })
+    }
+
+    if (duplicatedLead) {
+      channelId = duplicatedLead.channel_id
     }
 
     console.log('NEW LEAD snegohody (cart):', lead)
@@ -136,16 +169,28 @@ ${productsLeadData}
 
   `
 
-    await bot.api.sendMessage(
-      CHANNELS_SNEGOHOD[channelIndexSnegohody],
+    const { message_id } = await bot.api.sendMessage(
+      channelId,
       message,
       {
         parse_mode: 'HTML'
       }
     )
 
-    channelIndexSnegohody =
-      (channelIndexSnegohody + 1) % CHANNELS_SNEGOHOD.length
+    if (!duplicatedLead) {
+      channelIndexSnegohody = (channelIndexSnegohody + 1) % CHANNELS_SPECTECHNIKI.length
+
+      await LeadsModel.create({
+        message_id: message_id,
+        channel_id: channelId,
+
+        name: lead.Name,
+        contact_method: contactMethod,
+        phone: contactPhone,
+        telegram_username: telegramUsername
+      })
+    }
+
     res.sendStatus(200)
   }
 )

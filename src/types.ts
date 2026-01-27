@@ -6,8 +6,8 @@ export interface IClientModel {
   telegram_username: string
 }
 
-export interface IClientModel {
-  message_id: string
+export interface ILeadModel {
+  message_id: number
   channel_id: number
 
   name: string

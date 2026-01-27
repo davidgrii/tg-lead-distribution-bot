@@ -4,6 +4,7 @@ import ClientsModel from "../../models/client.model.js";
 import {bot} from "../../bot.js";
 import {CHANNELS_MINITRAKKTORY} from "../../constants.js";
 import {getContactMethod, getContactPhoneOrUsername} from "../../utils.js";
+import LeadsModel from "../../models/leads.model.js";
 
 const router = Router();
 
@@ -14,6 +15,8 @@ router.post(
   async (req: Request, res: Response) => {
     const lead = req.body as IMinitraktoryRequest
     const orConditions = []
+
+    let channelId = CHANNELS_MINITRAKKTORY[channelIndexMinitraktory]
 
     const contactMethod = getContactMethod(lead)
     const { contactPhone, telegramUsername } = getContactPhoneOrUsername(lead)
@@ -28,6 +31,10 @@ router.post(
       $or: orConditions
     })
 
+    const duplicatedLead = await LeadsModel.findOne({
+      $or: orConditions
+    })
+
     if (!client) {
       await ClientsModel.create({
         name: lead.Name,
@@ -35,6 +42,10 @@ router.post(
         phone: contactPhone,
         telegram_username: telegramUsername
       })
+    }
+
+    if (duplicatedLead) {
+      channelId = duplicatedLead.channel_id
     }
 
     console.log('NEW LEAD minitraktory:', lead)
@@ -54,16 +65,28 @@ router.post(
 ${leadData}
   `
 
-    await bot.api.sendMessage(
-      CHANNELS_MINITRAKKTORY[channelIndexMinitraktory],
+    const { message_id } = await bot.api.sendMessage(
+      channelId,
       message,
       {
         parse_mode: 'HTML'
       }
     )
 
-    channelIndexMinitraktory =
-      (channelIndexMinitraktory + 1) % CHANNELS_MINITRAKKTORY.length
+    if (!duplicatedLead) {
+      channelIndexMinitraktory = (channelIndexMinitraktory + 1) % CHANNELS_MINITRAKKTORY.length
+
+      await LeadsModel.create({
+        message_id: message_id,
+        channel_id: channelId,
+
+        name: lead.Name,
+        contact_method: contactMethod,
+        phone: contactPhone,
+        telegram_username: telegramUsername
+      })
+    }
+
     res.sendStatus(200)
   }
 )
@@ -73,6 +96,8 @@ router.post(
   async (req: Request, res: Response) => {
     const lead = req.body as IMinitraktoryCartRequest
     const orConditions = []
+
+    let channelId = CHANNELS_MINITRAKKTORY[channelIndexMinitraktory]
 
     const contactMethod = getContactMethod(lead)
     const { contactPhone, telegramUsername } = getContactPhoneOrUsername(lead)
@@ -87,6 +112,10 @@ router.post(
       $or: orConditions
     })
 
+    const duplicatedLead = await LeadsModel.findOne({
+      $or: orConditions
+    })
+
     if (!client) {
       await ClientsModel.create({
         name: lead.Name,
@@ -94,6 +123,10 @@ router.post(
         phone: contactPhone,
         telegram_username: telegramUsername
       })
+    }
+
+    if (duplicatedLead) {
+      channelId = duplicatedLead.channel_id
     }
 
     console.log('NEW LEAD minitraktory (cart):', lead)
@@ -135,16 +168,29 @@ ${productsLeadData}
 
   `
 
-    await bot.api.sendMessage(
-      CHANNELS_MINITRAKKTORY[channelIndexMinitraktory],
+    const { message_id } = await bot.api.sendMessage(
+      channelId,
       message,
       {
         parse_mode: 'HTML'
       }
     )
 
-    channelIndexMinitraktory =
-      (channelIndexMinitraktory + 1) % CHANNELS_MINITRAKKTORY.length
+    if (!duplicatedLead) {
+      channelIndexMinitraktory =
+        (channelIndexMinitraktory + 1) % CHANNELS_MINITRAKKTORY.length
+
+      await LeadsModel.create({
+        message_id: message_id,
+        channel_id: channelId,
+
+        name: lead.Name,
+        contact_method: contactMethod,
+        phone: contactPhone,
+        telegram_username: telegramUsername
+      })
+    }
+
     res.sendStatus(200)
   }
 )
