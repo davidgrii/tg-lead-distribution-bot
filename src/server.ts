@@ -3,10 +3,10 @@ import express from 'express'
 import cors from 'cors'
 import connectDB from './db.js'
 import {bot} from "./bot.js";
-import spectehnikiRoutes from "./api/spectehniki/spectehniki.routes.js";
 import dotenv from "dotenv";
 import snegohodyRoutes from "./api/snegohody/snegohody.routes.js";
 import minitraktoryRoutes from "./api/minitraktory/minitraktory.routes.js";
+import kvadrociklyRoutes from "./api/kvadrocikly/kvadrocikly.routes.js";
 
 dotenv.config()
 
@@ -33,7 +33,7 @@ const startApp = async () => {
 }
 
 // API
-app.use('/', spectehnikiRoutes)
+app.use('/', kvadrociklyRoutes)
 app.use('/', snegohodyRoutes)
 app.use('/', minitraktoryRoutes)
 

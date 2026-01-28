@@ -2,7 +2,7 @@ import {Request, Response, Router} from "express";
 import type {ISnegohodyCartRequest, ISnegohodyRequest} from "../../types.js";
 import ClientsModel from "../../models/client.model.js";
 import {bot} from "../../bot.js";
-import {CHANNELS_SNEGOHODY, CHANNELS_SPECTECHNIKI} from "../../constants.js";
+import {CHANNELS_SNEGOHODY} from "../../constants.js";
 import {getContactMethod, getContactPhoneOrUsername} from "../../utils.js";
 import LeadsModel from "../../models/leads.model.js";
 
@@ -72,11 +72,12 @@ ${leadData}
     )
 
     if (!duplicatedLead) {
-      channelIndexSnegohody = (channelIndexSnegohody + 1) % CHANNELS_SPECTECHNIKI.length
+      channelIndexSnegohody = (channelIndexSnegohody + 1) % CHANNELS_SNEGOHODY.length
 
       await LeadsModel.create({
         message_id: message_id,
         channel_id: channelId,
+        category: 'snegohody',
 
         name: lead.Name,
         contact_method: contactMethod,
@@ -176,11 +177,12 @@ ${productsLeadData}
     )
 
     if (!duplicatedLead) {
-      channelIndexSnegohody = (channelIndexSnegohody + 1) % CHANNELS_SPECTECHNIKI.length
+      channelIndexSnegohody = (channelIndexSnegohody + 1) % CHANNELS_SNEGOHODY.length
 
       await LeadsModel.create({
         message_id: message_id,
         channel_id: channelId,
+        category: 'snegohody',
 
         name: lead.Name,
         contact_method: contactMethod,

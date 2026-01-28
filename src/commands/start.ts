@@ -28,45 +28,54 @@ export const setupStartCommands = (bot: Bot) => {
 
   bot.command('chatid', async (ctx: Context) => {
     const chatId = String(ctx.chat?.id) || ''
-
     return await ctx.reply(chatId)
   })
 
   bot.on('message:contact', async (ctx) => {
-    const contactPhone = ('+' + ctx.message?.contact?.phone_number) || ''
-    const username = ('@' + ctx.from?.username) || ''
+    const contact = ctx.message?.contact
+    if (!contact) return
+
+    const contactPhone = contact.phone_number ? `+${contact.phone_number}` : ''
+    const username = ctx.from?.username ? `@${ctx.from.username}` : ''
 
     let relatedLead = null;
-    const currentCategory = 'Квадроциклов'
     let currentContactMethod = ''
 
+    const currentCategory = 'Квадроциклов'
+
     if (contactPhone) {
-      relatedLead = await LeadsModel.findOne({
-        phone: contactPhone
-      })
-      currentContactMethod = contactPhone
+      relatedLead = await LeadsModel.findOne({ phone: contactPhone })
+      currentContactMethod = relatedLead?.phone || ''
     }
 
-    if (username) {
-      relatedLead = await LeadsModel.findOne({
-        telegram_username: username
-      })
-      currentContactMethod = username
+    if (!relatedLead && username) {
+      relatedLead = await LeadsModel.findOne({telegram_username: username})
+      currentContactMethod = relatedLead?.telegram_username || ''
     }
 
-    const message = `❗️ <b>Получена новая заявка:</b> ❗️
+    const message = `
+
+❗️ <b>Получена новая заявка:</b> ❗️
 
 <b>Источник:</b> <code>ТГ Бот</code>
 <b>Контакт:</b> <code>${currentContactMethod}</code>
+
+—————————
+
+👇👇👇
 `
 
     if (relatedLead) {
-      await ctx.api.sendMessage(relatedLead.channel_id, message,
-        {
-          parse_mode: 'HTML',
-          reply_to_message_id: relatedLead.message_id
-        }
-      )
+      await ctx.api.sendMessage(relatedLead.channel_id, message, {
+        reply_to_message_id: ctx.message.message_id,
+        parse_mode: 'HTML'
+      })
+
+      await ctx.api.forwardMessage(
+        relatedLead.channel_id,
+        ctx.chat.id,
+        ctx.message.message_id,
+      );
     }
 
     const inlineKeyboard = new InlineKeyboard()

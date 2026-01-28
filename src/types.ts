@@ -9,6 +9,7 @@ export interface IClientModel {
 export interface ILeadModel {
   message_id: number
   channel_id: number
+  category: 'kvadrocikly' | 'snegohody' | 'minitraktory'
 
   name: string
   contact_method: TMessenger

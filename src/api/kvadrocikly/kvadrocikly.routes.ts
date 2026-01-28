@@ -1,22 +1,22 @@
 import {Request, Response, Router} from "express";
-import type {ISpectechnikiCartRequest} from "../../types.js";
+import type {ISpectechnikiCartRequest, ISpectechnikiRequest} from "../../types.js";
 import ClientsModel from "../../models/client.model.js";
 import {bot} from "../../bot.js";
-import {CHANNELS_SPECTECHNIKI} from "../../constants.js";
+import {CHANNELS_KVADROCIKLY} from "../../constants.js";
 import {getContactMethod, getContactPhoneOrUsername} from "../../utils.js";
 import LeadsModel from "../../models/leads.model.js";
 
 const router = Router();
 
-let channelIndexSpectehniki = 0
+let channelIndexKvadrocikly = 0
 
 router.post(
   '/tilda-webhook-catalog-spectehniki',
   async (req: Request, res: Response) => {
-    const lead = req.body
+    const lead = req.body as ISpectechnikiRequest
     const orConditions = []
 
-    let channelId = CHANNELS_SPECTECHNIKI[channelIndexSpectehniki]
+    let channelId = CHANNELS_KVADROCIKLY[channelIndexKvadrocikly]
 
     const contactMethod = getContactMethod(lead)
     const { contactPhone, telegramUsername } = getContactPhoneOrUsername(lead)
@@ -72,11 +72,12 @@ ${leadData}
     )
 
     if (!duplicatedLead) {
-      channelIndexSpectehniki = (channelIndexSpectehniki + 1) % CHANNELS_SPECTECHNIKI.length
+      channelIndexKvadrocikly = (channelIndexKvadrocikly + 1) % CHANNELS_KVADROCIKLY.length
 
       await LeadsModel.create({
         message_id: message_id,
         channel_id: channelId,
+        category: 'kvadrocikly',
 
         name: lead.Name,
         contact_method: contactMethod,
@@ -95,7 +96,7 @@ router.post(
     const lead = req.body as ISpectechnikiCartRequest
     const orConditions = []
 
-    let channelId = CHANNELS_SPECTECHNIKI[channelIndexSpectehniki]
+    let channelId = CHANNELS_KVADROCIKLY[channelIndexKvadrocikly]
 
     const contactMethod = getContactMethod(lead)
     const { contactPhone, telegramUsername } = getContactPhoneOrUsername(lead)
@@ -175,11 +176,12 @@ ${productsLeadData}
     )
 
     if (!duplicatedLead) {
-      channelIndexSpectehniki = (channelIndexSpectehniki + 1) % CHANNELS_SPECTECHNIKI.length
+      channelIndexKvadrocikly = (channelIndexKvadrocikly + 1) % CHANNELS_KVADROCIKLY.length
 
       await LeadsModel.create({
         message_id: message_id,
         channel_id: channelId,
+        category: 'kvadrocikly',
 
         name: lead.Name,
         contact_method: contactMethod,

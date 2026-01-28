@@ -2,7 +2,7 @@ import {Request, Response, Router} from "express";
 import type {IMinitraktoryCartRequest, IMinitraktoryRequest} from "../../types.js";
 import ClientsModel from "../../models/client.model.js";
 import {bot} from "../../bot.js";
-import {CHANNELS_MINITRAKKTORY} from "../../constants.js";
+import {CHANNELS_MINITRAKTORY} from "../../constants.js";
 import {getContactMethod, getContactPhoneOrUsername} from "../../utils.js";
 import LeadsModel from "../../models/leads.model.js";
 
@@ -16,7 +16,7 @@ router.post(
     const lead = req.body as IMinitraktoryRequest
     const orConditions = []
 
-    let channelId = CHANNELS_MINITRAKKTORY[channelIndexMinitraktory]
+    let channelId = CHANNELS_MINITRAKTORY[channelIndexMinitraktory]
 
     const contactMethod = getContactMethod(lead)
     const { contactPhone, telegramUsername } = getContactPhoneOrUsername(lead)
@@ -72,11 +72,12 @@ ${leadData}
     )
 
     if (!duplicatedLead) {
-      channelIndexMinitraktory = (channelIndexMinitraktory + 1) % CHANNELS_MINITRAKKTORY.length
+      channelIndexMinitraktory = (channelIndexMinitraktory + 1) % CHANNELS_MINITRAKTORY.length
 
       await LeadsModel.create({
         message_id: message_id,
         channel_id: channelId,
+        category: 'minitraktory',
 
         name: lead.Name,
         contact_method: contactMethod,
@@ -95,7 +96,7 @@ router.post(
     const lead = req.body as IMinitraktoryCartRequest
     const orConditions = []
 
-    let channelId = CHANNELS_MINITRAKKTORY[channelIndexMinitraktory]
+    let channelId = CHANNELS_MINITRAKTORY[channelIndexMinitraktory]
 
     const contactMethod = getContactMethod(lead)
     const { contactPhone, telegramUsername } = getContactPhoneOrUsername(lead)
@@ -176,11 +177,12 @@ ${productsLeadData}
 
     if (!duplicatedLead) {
       channelIndexMinitraktory =
-        (channelIndexMinitraktory + 1) % CHANNELS_MINITRAKKTORY.length
+        (channelIndexMinitraktory + 1) % CHANNELS_MINITRAKTORY.length
 
       await LeadsModel.create({
         message_id: message_id,
         channel_id: channelId,
+        category: 'minitraktory',
 
         name: lead.Name,
         contact_method: contactMethod,
