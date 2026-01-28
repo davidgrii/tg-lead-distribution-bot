@@ -59,8 +59,6 @@ router.post(
 
     const message = `
   ❗️ <b>Получена новая заявка:</b> ❗️ 
-    
-<b>От:</b> <code>${req.host}</code>
   
 ${leadData}
   `
@@ -195,3 +193,5 @@ ${productsLeadData}
 )
 
 export default router;
+
+// <b>От:</b> <code>${req.host}</code>
