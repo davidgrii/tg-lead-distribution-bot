@@ -5,6 +5,7 @@ import {bot} from "../../bot.js";
 import {CHANNELS_SNEGOHODY} from "../../constants.js";
 import {getContactMethod, getContactPhoneOrUsername} from "../../utils.js";
 import LeadsModel from "../../models/leads.model.js";
+import {InlineKeyboard} from "grammy";
 
 const router = Router();
 
@@ -57,6 +58,12 @@ router.post(
       })
       .join('\n')
 
+    const statusKeyboard = new InlineKeyboard()
+      .text('🟢  СВЯЗАЛСЯ  🟢', 'status:CONTACTED')
+      .text('🔴  НЕТ КОНТАКТА  🔴', 'status:NO_CONTACT')
+      .row()
+      .text('🟡  ДУБЛЬ  🟡', 'status:DUPLICATE');
+
     const message = `
   ❗️ <b>Получена новая заявка:</b> ❗️ 
       
@@ -67,6 +74,7 @@ ${leadData}
       channelId,
       message,
       {
+        reply_markup: statusKeyboard,
         parse_mode: 'HTML'
       }
     )
@@ -153,6 +161,12 @@ router.post(
       .filter(Boolean)
       .join('\n')
 
+    const statusKeyboard = new InlineKeyboard()
+      .text('🟢  СВЯЗАЛСЯ  🟢', 'status:CONTACTED')
+      .text('🔴  НЕТ КОНТАКТА  🔴', 'status:NO_CONTACT')
+      .row()
+      .text('🟡  ДУБЛЬ  🟡', 'status:DUPLICATE');
+
     const message = `
   ❗️ <b>Получена новая заявка:</b> ❗️ 
     
@@ -172,6 +186,7 @@ ${productsLeadData}
       channelId,
       message,
       {
+        reply_markup: statusKeyboard,
         parse_mode: 'HTML'
       }
     )

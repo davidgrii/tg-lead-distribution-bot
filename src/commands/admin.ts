@@ -1,6 +1,6 @@
 import {ADMIN_IDS} from "../constants.js";
 import ClientModel from "../models/client.model.js";
-import {type Bot, InputFile} from "grammy";
+import {type Bot, InlineKeyboard, InputFile} from "grammy";
 
 export const setupAdminCommands = (bot: Bot) => {
   bot.command('clients', async (ctx) => {
@@ -26,4 +26,75 @@ export const setupAdminCommands = (bot: Bot) => {
       new InputFile(Buffer.from(csv, 'utf-8'), 'clients.csv')
     )
   })
+
+  bot.callbackQuery('status:NO_CONTACT', async (ctx) => {
+    const chat = ctx.chat;
+    const message = ctx.callbackQuery.message;
+
+    if (!chat || !message) return;
+    const keyboard = new InlineKeyboard()
+      .text('🔴  НЕТ КОНТАКТА  🔴', 'status:NO_CONTACT_LOCKED');
+
+    await ctx.api.editMessageReplyMarkup(
+      chat.id,
+      message.message_id,
+      {
+        reply_markup: keyboard,
+      }
+    );
+
+    await ctx.answerCallbackQuery({ text: '🔴  Статус: Нет контакта  🔴' });
+  })
+
+  bot.callbackQuery('status:CONTACTED', async (ctx) => {
+    const chat = ctx.chat;
+    const message = ctx.callbackQuery.message;
+
+    if (!chat || !message) return;
+
+    const keyboard = new InlineKeyboard()
+      .text('🟢  СВЯЗАЛСЯ  🟢', 'status:CONTACTED_LOCKED');
+
+    await ctx.api.editMessageReplyMarkup(
+      chat.id,
+      message.message_id,
+      {
+        reply_markup: keyboard,
+      }
+    );
+
+    await ctx.answerCallbackQuery({ text: '🟢  Статус: Связался  🟢' });
+  })
+
+  bot.callbackQuery('status:DUPLICATE', async (ctx) => {
+    const chat = ctx.chat;
+    const message = ctx.callbackQuery.message;
+
+    if (!chat || !message) return;
+
+    const keyboard = new InlineKeyboard()
+      .text('🟡  ДУБЛЬ  🟡', 'status:DUPLICATE_LOCKED');
+
+    await ctx.api.editMessageReplyMarkup(
+      chat.id,
+      message.message_id,
+      {
+        reply_markup: keyboard,
+      }
+    );
+
+    await ctx.answerCallbackQuery({ text: '🟡  Статус: Дубль  🟡' });
+  })
+
+  bot.callbackQuery('status:NO_CONTACT_LOCKED', async (ctx) => {
+    await ctx.answerCallbackQuery({ text: '❗  Статус зафиксирован  ❗' });
+  });
+
+  bot.callbackQuery('status:CONTACTED_LOCKED', async (ctx) => {
+    await ctx.answerCallbackQuery({ text: '❗  Статус зафиксирован  ❗' });
+  });
+
+  bot.callbackQuery('status:DUPLICATE_LOCKED', async (ctx) => {
+    await ctx.answerCallbackQuery({ text: '❗  Статус зафиксирован  ❗' });
+  });
 }
