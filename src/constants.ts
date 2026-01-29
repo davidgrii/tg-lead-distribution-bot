@@ -13,7 +13,7 @@ export const ADMIN_IDS = process.env.ADMIN_IDS
 
 export const CHANNELS_KVADROCIKLY = [
   Number(process.env.CHANNEL_KVADROCIKLY_PART_1),
-  Number(process.env.CHANNEL_PACHANNEL_KVADROCIKLY_PART_2)
+  Number(process.env.CHANNEL_KVADROCIKLY_PART_2)
 ]
 
 export const CHANNELS_SNEGOHODY = [
