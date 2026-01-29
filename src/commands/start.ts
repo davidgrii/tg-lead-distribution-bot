@@ -1,5 +1,6 @@
 import {type Bot, Context, InlineKeyboard, Keyboard} from "grammy";
 import LeadsModel from "../models/leads.model.js";
+import {TG_CHANNEL_KVADROCIKLY_URL, TG_CHANNEL_MINITRAKTORY_URL} from "../constants.js";
 
 export const setupStartCommands = (bot: Bot) => {
   bot.command('start', async (ctx: Context) => {
@@ -40,17 +41,26 @@ export const setupStartCommands = (bot: Bot) => {
 
     let relatedLead = null;
     let currentContactMethod = ''
-
-    const currentCategory = 'Квадроциклов'
+    let currentCategory = ''
 
     if (contactPhone) {
       relatedLead = await LeadsModel.findOne({ phone: contactPhone })
       currentContactMethod = relatedLead?.phone || ''
+
+      currentCategory =
+        relatedLead?.category === 'kvadrocikly' && TG_CHANNEL_KVADROCIKLY_URL
+        || relatedLead?.category === 'snegohody' && TG_CHANNEL_KVADROCIKLY_URL
+        || TG_CHANNEL_MINITRAKTORY_URL
     }
 
     if (!relatedLead && username) {
       relatedLead = await LeadsModel.findOne({telegram_username: username})
       currentContactMethod = relatedLead?.telegram_username || ''
+
+      currentCategory =
+        relatedLead?.category === 'kvadrocikly' && TG_CHANNEL_KVADROCIKLY_URL
+        || relatedLead?.category === 'snegohody' && TG_CHANNEL_KVADROCIKLY_URL
+        || TG_CHANNEL_MINITRAKTORY_URL
     }
 
     const message = `
@@ -79,12 +89,13 @@ export const setupStartCommands = (bot: Bot) => {
     }
 
     const inlineKeyboard = new InlineKeyboard()
-      .url('📢  ПОДПИСАТЬСЯ  📢', 'https://t.me/spectechnikamir')
+      .url('📢  ПОДПИСАТЬСЯ  📢', currentCategory)
 
     await ctx.reply(
       `<b>✅ Спасибо, мы отправим вам предложения в ближайшее время!</b>
        
-А пока подписывайтесь на наш канал с самыми выгодными вариантами <b>${currentCategory}</b>
+А пока подписывайтесь на наш канал с самыми выгодными вариантами:
+<b>${currentCategory}</b>
 `,
       {
         reply_markup: inlineKeyboard,
