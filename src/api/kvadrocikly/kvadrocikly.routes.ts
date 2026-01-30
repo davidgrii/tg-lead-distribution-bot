@@ -1,23 +1,25 @@
 import {Request, Response, Router} from "express";
-import type {ISpectechnikiCartRequest, ISpectechnikiRequest} from "../../types.js";
+import type {ICartLead, ISpectechnikiRequest} from "../../types.js";
 import ClientsModel from "../../models/client.model.js";
-import {bot} from "../../bot.js";
+import {adminBot} from "../../bot.js";
 import {CHANNELS_KVADROCIKLY} from "../../constants.js";
-import {getContactMethod, getContactPhoneOrUsername} from "../../utils.js";
+import {
+  getCartLeadData, getCartLeadProductsData,
+  getContactMethod,
+  getContactPhoneOrUsername,
+  getLeadData,
+  getNextChannel
+} from "../../utils.js";
 import LeadsModel from "../../models/leads.model.js";
-import {InlineKeyboard} from "grammy";
+import {statusKeyboard} from "../../keyboards/keyboards.js";
 
 const router = Router();
-
-let channelIndexKvadrocikly = 0
 
 router.post(
   '/tilda-webhook-catalog-spectehniki',
   async (req: Request, res: Response) => {
     const lead = req.body as ISpectechnikiRequest
     const orConditions = []
-
-    let channelId = CHANNELS_KVADROCIKLY[channelIndexKvadrocikly]
 
     const contactMethod = getContactMethod(lead)
     const { contactPhone, telegramUsername } = getContactPhoneOrUsername(lead)
@@ -31,10 +33,14 @@ router.post(
     const client = await ClientsModel.findOne({
       $or: orConditions
     })
-
     const duplicatedLead = await LeadsModel.findOne({
+      category: 'kvadrocikly',
       $or: orConditions
     })
+
+    let channelId = duplicatedLead
+      ? duplicatedLead.channel_id
+      : await getNextChannel('kvadrocikly', CHANNELS_KVADROCIKLY)
 
     if (!client) {
       await ClientsModel.create({
@@ -51,18 +57,7 @@ router.post(
 
     console.log('NEW LEAD spectehniki:', lead)
 
-    const leadData = Object.entries(lead)
-      .map(([key, value], index) => {
-        const formatted = `<b>${key?.at(0)?.toUpperCase() + key.slice(1)}:</b> — ${value}`
-        return (index + 1) % 3 === 0 ? formatted + '\n' : formatted
-      })
-      .join('\n')
-
-    const statusKeyboard = new InlineKeyboard()
-      .text('🟢  СВЯЗАЛСЯ  🟢', 'status:CONTACTED')
-      .text('🔴  НЕТ КОНТАКТА  🔴', 'status:NO_CONTACT')
-      .row()
-      .text('🟡  ДУБЛЬ  🟡', 'status:DUPLICATE');
+    const leadData = getLeadData(lead)
 
     const message = `
   ❗️ <b>Получена новая заявка:</b> ❗️ 
@@ -70,7 +65,7 @@ router.post(
 ${leadData}
   `
 
-    const { message_id } = await bot.api.sendMessage(
+    const { message_id } = await adminBot.api.sendMessage(
       channelId,
       message,
       {
@@ -80,10 +75,8 @@ ${leadData}
     )
 
     if (!duplicatedLead) {
-      channelIndexKvadrocikly = (channelIndexKvadrocikly + 1) % CHANNELS_KVADROCIKLY.length
-
       await LeadsModel.create({
-        message_id: message_id,
+        message_id: String(message_id),
         channel_id: channelId,
         category: 'kvadrocikly',
 
@@ -101,10 +94,8 @@ ${leadData}
 router.post(
   '/tilda-webhook-catalog-spectehniki-cart',
   async (req: Request, res: Response) => {
-    const lead = req.body as ISpectechnikiCartRequest
+    const lead = req.body as ICartLead
     const orConditions = []
-
-    let channelId = CHANNELS_KVADROCIKLY[channelIndexKvadrocikly]
 
     const contactMethod = getContactMethod(lead)
     const { contactPhone, telegramUsername } = getContactPhoneOrUsername(lead)
@@ -118,10 +109,14 @@ router.post(
     const client = await ClientsModel.findOne({
       $or: orConditions
     })
-
     const duplicatedLead = await LeadsModel.findOne({
+      category: 'kvadrocikly',
       $or: orConditions
     })
+
+    let channelId = duplicatedLead
+      ? duplicatedLead.channel_id
+      : await getNextChannel('kvadrocikly', CHANNELS_KVADROCIKLY)
 
     if (!client) {
       await ClientsModel.create({
@@ -138,33 +133,8 @@ router.post(
 
     console.log('NEW LEAD spectehniki (cart):', lead)
 
-    const leadData = Object.entries(lead)
-      .map(([key, value], index) => {
-        if (key === 'payment') return null
-
-        const formatted = `<b>${key?.at(0)?.toUpperCase() + key.slice(1)}:</b> — ${value}`
-
-        return (index + 1) % 3 === 0 ? formatted + '\n' : formatted
-      })
-      .filter(Boolean)
-      .join('\n')
-
-    const productsLeadData = Object.entries(lead?.payment?.products[0])
-      .map(([key, value], index) => {
-        if (key === 'img') return null
-
-        const formatted = `<b>${key?.at(0)?.toUpperCase() + key.slice(1)}:</b> — ${key === 'price' || key === 'amount'  ? value + '₽' : value}`
-
-        return (index + 1) % 3 === 0 ? formatted + '\n' : formatted
-      })
-      .filter(Boolean)
-      .join('\n')
-
-    const statusKeyboard = new InlineKeyboard()
-      .text('🟢  СВЯЗАЛСЯ  🟢', 'status:CONTACTED')
-      .text('🔴  НЕТ КОНТАКТА  🔴', 'status:NO_CONTACT')
-      .row()
-      .text('🟡  ДУБЛЬ  🟡', 'status:DUPLICATE');
+    const leadData = getCartLeadData(lead)
+    const productsLeadData = getCartLeadProductsData(lead)
 
     const message = `
   ❗️ <b>Получена новая заявка:</b> ❗️ 
@@ -181,7 +151,7 @@ ${productsLeadData}
 
   `
 
-    const { message_id } = await bot.api.sendMessage(
+    const { message_id } = await adminBot.api.sendMessage(
       channelId,
       message,
       {
@@ -191,10 +161,8 @@ ${productsLeadData}
     )
 
     if (!duplicatedLead) {
-      channelIndexKvadrocikly = (channelIndexKvadrocikly + 1) % CHANNELS_KVADROCIKLY.length
-
       await LeadsModel.create({
-        message_id: message_id,
+        message_id: String(message_id),
         channel_id: channelId,
         category: 'kvadrocikly',
 
@@ -210,5 +178,3 @@ ${productsLeadData}
 )
 
 export default router;
-
-// <b>От:</b> <code>${req.host}</code>

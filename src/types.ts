@@ -5,10 +5,9 @@ export interface IClientModel {
   phone?: string
   telegram_username: string
 }
-
 export interface ILeadModel {
-  message_id: number
-  channel_id: number
+  message_id: string
+  channel_id: string
   category: 'kvadrocikly' | 'snegohody' | 'minitraktory'
 
   name: string
@@ -26,17 +25,6 @@ export interface ISpectechnikiRequest extends ILeadData {
   Какой_бюджет_вы_рассматриваете_рублей: string
   Бренды_да_или_нет: string
 }
-export interface ISpectechnikiCartRequest extends Omit<ILeadData, 'Когда_покупка' | 'tranid'> {
-  payment: {
-    products: {
-      name: string
-      quantity: number
-      amount: number
-      price: string
-    }[]
-    amount: string
-  }
-}
 
 export interface ISnegohodyRequest extends ILeadData {
   Тип: string
@@ -46,17 +34,6 @@ export interface ISnegohodyRequest extends ILeadData {
   Бюджет: string
   Бренды_да_или_нет: string
 }
-export interface ISnegohodyCartRequest extends Omit<ILeadData, 'Когда_покупка' | 'tranid'> {
-  payment: {
-    products: {
-      name: string
-      quantity: number
-      amount: number
-      price: string
-    }[]
-    amount: string
-  }
-}
 
 export interface IMinitraktoryRequest extends ILeadData {
   Вид_работ: string
@@ -65,17 +42,6 @@ export interface IMinitraktoryRequest extends ILeadData {
   Кабина: string
   Бюджет: string
   Бренды_да_или_нет: string
-}
-export interface IMinitraktoryCartRequest extends Omit<ILeadData, 'Когда_покупка' | 'tranid'> {
-  payment: {
-    products: {
-      name: string
-      quantity: number
-      amount: number
-      price: string
-    }[]
-    amount: string
-  }
 }
 
 export interface ILeadData {
@@ -94,6 +60,18 @@ export interface ILeadData {
   tranid: string
   formid: string
   formname: string
+}
+
+export interface ICartLead extends Omit<ILeadData, 'Когда_покупка' | 'tranid'> {
+  payment: {
+    products: {
+      name: string
+      quantity: number
+      amount: number
+      price: string
+    }[]
+    amount: string
+  }
 }
 
 export type TMessenger = 'Whatsapp' | 'Telegram' | 'Телефон'

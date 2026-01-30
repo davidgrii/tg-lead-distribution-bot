@@ -12,18 +12,18 @@ export const DATABASE_URL = process.env.DB_URL
 export const ADMIN_IDS = process.env.ADMIN_IDS
 
 export const CHANNELS_KVADROCIKLY = [
-  Number(process.env.CHANNEL_KVADROCIKLY_PART_1),
-  Number(process.env.CHANNEL_KVADROCIKLY_PART_2)
+  String(process.env.CHANNEL_KVADROCIKLY_PART_1),
+  String(process.env.CHANNEL_KVADROCIKLY_PART_2)
 ]
 
 export const CHANNELS_SNEGOHODY = [
-  Number(process.env.CHANNEL_SNEGOHODY_PART_1),
-  Number(process.env.CHANNEL_SNEGOHODY_PART_2)
+  String(process.env.CHANNEL_SNEGOHODY_PART_1),
+  String(process.env.CHANNEL_SNEGOHODY_PART_2)
 ]
 
 export const CHANNELS_MINITRAKTORY = [
-  Number(process.env.CHANNEL_MINITRAKKTORY_PART_1),
-  Number(process.env.CHANNEL_MINITRAKKTORY_PART_2)
+  String(process.env.CHANNEL_MINITRAKKTORY_PART_1),
+  String(process.env.CHANNEL_MINITRAKKTORY_PART_2)
 ]
 
 // const data = {

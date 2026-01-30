@@ -2,7 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import connectDB from './db.js'
-import {bot} from "./bot.js";
+import {adminBot, kvadrociklyBot, minitractoryBot, snegohodyBot} from "./bot.js";
 import dotenv from "dotenv";
 import snegohodyRoutes from "./api/snegohody/snegohody.routes.js";
 import minitraktoryRoutes from "./api/minitraktory/minitraktory.routes.js";
@@ -29,7 +29,11 @@ app.use(express.json())
 const startApp = async () => {
   await connectDB()
 
-  bot.start()
+  kvadrociklyBot.start()
+  minitractoryBot.start()
+  snegohodyBot.start()
+
+  adminBot.start()
 }
 
 // API
