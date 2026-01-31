@@ -65,7 +65,10 @@ export const setupMinitractoryCommands = (bot: Bot) => {
 `
     if (!relatedLead) {
       await ctx.api.sendMessage(channelId, message, {
-        parse_mode: 'HTML'
+        parse_mode: 'HTML',
+        reply_markup: {
+          remove_keyboard: true
+        }
       })
 
       await ctx.api.forwardMessage(
@@ -78,7 +81,10 @@ export const setupMinitractoryCommands = (bot: Bot) => {
     if (relatedLead) {
       await ctx.api.sendMessage(relatedLead.channel_id, message, {
         reply_to_message_id: ctx.message.message_id,
-        parse_mode: 'HTML'
+        parse_mode: 'HTML',
+        reply_markup: {
+          remove_keyboard: true
+        }
       })
 
       await ctx.api.forwardMessage(
