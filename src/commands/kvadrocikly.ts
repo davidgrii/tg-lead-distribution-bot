@@ -39,19 +39,18 @@ export const setupKvadrociklyCommands = (bot: Bot) => {
     let currentContactMethod = ''
 
     if (contactPhone) {
-      relatedLead = await LeadsModel.findOne({ phone: contactPhone })
+      relatedLead = await LeadsModel.findOne({ phone: contactPhone, category: 'kvadrocikly' })
       currentContactMethod = relatedLead?.phone || ''
     }
 
     if (!relatedLead && username) {
-      relatedLead = await LeadsModel.findOne({ telegram_username: username })
+      relatedLead = await LeadsModel.findOne({ telegram_username: username, category: 'kvadrocikly' })
       currentContactMethod = relatedLead?.telegram_username || ''
     }
 
     let channelId = relatedLead
       ? relatedLead.channel_id
       : await getNextChannel("kvadrocikly", CHANNELS_KVADROCIKLY)
-
 
     const message = `
 
@@ -77,7 +76,6 @@ export const setupKvadrociklyCommands = (bot: Bot) => {
     }
 
     if (relatedLead) {
-      console.log('relatedLead:', relatedLead)
       await ctx.api.sendMessage(relatedLead.channel_id, message, {
         reply_to_message_id: ctx.message.message_id,
         parse_mode: 'HTML'
@@ -174,4 +172,8 @@ export const setupKvadrociklyCommands = (bot: Bot) => {
   bot.callbackQuery('status:DUPLICATE_LOCKED', async (ctx) => {
     await ctx.answerCallbackQuery({text: '❗  Статус зафиксирован  ❗'});
   });
+
+  bot.catch((err) => {
+    console.error('BOT ERROR:', err.error)
+  })
 };

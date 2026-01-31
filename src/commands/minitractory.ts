@@ -39,12 +39,12 @@ export const setupMinitractoryCommands = (bot: Bot) => {
     let currentContactMethod = ''
 
     if (contactPhone) {
-      relatedLead = await LeadsModel.findOne({phone: contactPhone})
+      relatedLead = await LeadsModel.findOne({ phone: contactPhone, category: 'minitraktory'})
       currentContactMethod = relatedLead?.phone || ''
     }
 
     if (!relatedLead && username) {
-      relatedLead = await LeadsModel.findOne({telegram_username: username})
+      relatedLead = await LeadsModel.findOne({ telegram_username: username, category: 'minitraktory'})
       currentContactMethod = relatedLead?.telegram_username || ''
     }
 
@@ -76,7 +76,6 @@ export const setupMinitractoryCommands = (bot: Bot) => {
     }
 
     if (relatedLead) {
-      console.log('relatedLead:', relatedLead)
       await ctx.api.sendMessage(relatedLead.channel_id, message, {
         reply_to_message_id: ctx.message.message_id,
         parse_mode: 'HTML'
@@ -173,4 +172,8 @@ export const setupMinitractoryCommands = (bot: Bot) => {
   bot.callbackQuery('status:DUPLICATE_LOCKED', async (ctx) => {
     await ctx.answerCallbackQuery({text: '❗  Статус зафиксирован  ❗'});
   });
+
+  bot.catch((err) => {
+    console.error('BOT ERROR:', err.error)
+  })
 };
