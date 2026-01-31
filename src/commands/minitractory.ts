@@ -1,6 +1,7 @@
 import {type Bot, Context, InlineKeyboard, Keyboard} from "grammy";
 import LeadsModel from "../models/leads.model.js";
-import {TG_CHANNEL_MINITRAKTORY_URL} from "../constants.js";
+import {CHANNELS_MINITRAKTORY, TG_CHANNEL_MINITRAKTORY_URL} from "../constants.js";
+import {getNextChannel} from "../utils.js";
 
 export const setupMinitractoryCommands = (bot: Bot) => {
   bot.command('start', async (ctx: Context) => {
@@ -47,6 +48,10 @@ export const setupMinitractoryCommands = (bot: Bot) => {
       currentContactMethod = relatedLead?.telegram_username || ''
     }
 
+    let channelId = relatedLead
+      ? relatedLead.channel_id
+      : await getNextChannel("minitraktory", CHANNELS_MINITRAKTORY)
+
     const message = `
 
 ❗️ <b>Получена новая заявка:</b> ❗️
@@ -59,12 +64,12 @@ export const setupMinitractoryCommands = (bot: Bot) => {
 👇👇👇
 `
     if (!relatedLead) {
-      await ctx.api.sendMessage('lastChannelMinitraktory', message, {
+      await ctx.api.sendMessage(channelId, message, {
         parse_mode: 'HTML'
       })
 
       await ctx.api.forwardMessage(
-        'lastChannelMinitraktory',
+        channelId,
         ctx.chat.id,
         ctx.message.message_id,
       );

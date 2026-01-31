@@ -1,6 +1,7 @@
 import {type Bot, Context, InlineKeyboard, Keyboard} from "grammy";
 import LeadsModel from "../models/leads.model.js";
-import {TG_CHANNEL_KVADROCIKLY_URL} from "../constants.js";
+import {CHANNELS_KVADROCIKLY, TG_CHANNEL_KVADROCIKLY_URL} from "../constants.js";
+import {getNextChannel} from "../utils.js";
 
 export const setupKvadrociklyCommands = (bot: Bot) => {
   bot.command('start', async (ctx: Context) => {
@@ -47,6 +48,11 @@ export const setupKvadrociklyCommands = (bot: Bot) => {
       currentContactMethod = relatedLead?.telegram_username || ''
     }
 
+    let channelId = relatedLead
+      ? relatedLead.channel_id
+      : await getNextChannel("kvadrocikly", CHANNELS_KVADROCIKLY)
+
+
     const message = `
 
 ❗️ <b>Получена новая заявка:</b> ❗️
@@ -59,12 +65,12 @@ export const setupKvadrociklyCommands = (bot: Bot) => {
 👇👇👇
 `
     if (!relatedLead) {
-      await ctx.api.sendMessage('lastChannelKvadrocikly', message, {
+      await ctx.api.sendMessage(channelId, message, {
         parse_mode: 'HTML'
       })
 
       await ctx.api.forwardMessage(
-        'lastChannelKvadrocikly',
+        channelId,
         ctx.chat.id,
         ctx.message.message_id,
       );

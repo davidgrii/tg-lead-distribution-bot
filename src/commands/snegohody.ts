@@ -1,10 +1,17 @@
 import {type Bot, Context, InlineKeyboard, Keyboard} from "grammy";
 import LeadsModel from "../models/leads.model.js";
 import {
+  CHANNELS_SNEGOHODY,
   TG_CHANNEL_SNEGOHODY_URL
 } from "../constants.js";
+import {getNextChannel} from "../utils.js";
 
 export const setupSnegohodyCommands = (bot: Bot) => {
+  bot.command('chatid', async (ctx: Context) => {
+    const chatId = String(ctx.chat?.id) || ''
+    return await ctx.reply(chatId)
+  })
+
   bot.command('start', async (ctx: Context) => {
     const username = ctx.from?.username || ''
 
@@ -49,6 +56,10 @@ export const setupSnegohodyCommands = (bot: Bot) => {
       currentContactMethod = relatedLead?.telegram_username || ''
     }
 
+    let channelId = relatedLead
+      ? relatedLead.channel_id
+      : await getNextChannel('snegohody', CHANNELS_SNEGOHODY)
+
     const message = `
 
 ❗️ <b>Получена новая заявка:</b> ❗️
@@ -62,12 +73,12 @@ export const setupSnegohodyCommands = (bot: Bot) => {
 `
 
     if (!relatedLead) {
-      await ctx.api.sendMessage('lastChannelSnegohody', message, {
+      await ctx.api.sendMessage(channelId, message, {
         parse_mode: 'HTML'
       })
 
       await ctx.api.forwardMessage(
-        'lastChannelSnegohody',
+        channelId,
         ctx.chat.id,
         ctx.message.message_id,
       );
