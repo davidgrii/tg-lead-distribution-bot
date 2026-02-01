@@ -77,7 +77,7 @@ export const setupKvadrociklyCommands = (bot: Bot) => {
 
     if (relatedLead) {
       await ctx.api.sendMessage(relatedLead.channel_id, message, {
-        reply_to_message_id: ctx.message.message_id,
+        // reply_to_message_id: ctx.message.message_id,
         parse_mode: 'HTML',
       })
 
