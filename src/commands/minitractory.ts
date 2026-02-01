@@ -103,6 +103,8 @@ export const setupMinitractoryCommands = (bot: Bot) => {
   })
 
   bot.callbackQuery('status:NO_CONTACT', async (ctx) => {
+    console.log('NO CONTACT')
+
     const chat = ctx.chat;
     const message = ctx.callbackQuery.message;
 
