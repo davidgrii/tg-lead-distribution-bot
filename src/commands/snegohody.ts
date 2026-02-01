@@ -4,7 +4,6 @@ import {
   CHANNELS_SNEGOHODY,
   TG_CHANNEL_SNEGOHODY_URL
 } from "../constants.js";
-import {getNextChannel} from "../utils.js";
 
 export const setupSnegohodyCommands = (bot: Bot) => {
   bot.command('start', async (ctx: Context) => {

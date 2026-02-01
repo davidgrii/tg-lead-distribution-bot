@@ -7,10 +7,9 @@ import {
   getCartLeadProductsData,
   getContactMethod,
   getContactPhoneOrUsername, getLeadData,
-  getNextChannel
 } from "../../utils.js";
 import LeadsModel from "../../models/leads.model.js";
-import {adminBot} from "../../bot.js";
+import {snegohodyBot} from "../../bot.js";
 import {statusKeyboard} from "../../keyboards/keyboards.js";
 
 const router = Router();
@@ -67,7 +66,7 @@ router.post(
 ${leadData}
   `
 
-    const { message_id } = await adminBot.api.sendMessage(
+    const { message_id } = await snegohodyBot.api.sendMessage(
       channelId,
       message,
       {
@@ -151,7 +150,7 @@ ${productsLeadData}
 
   `
 
-    const { message_id } = await adminBot.api.sendMessage(
+    const { message_id } = await snegohodyBot.api.sendMessage(
       channelId,
       message,
       {

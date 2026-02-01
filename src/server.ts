@@ -29,15 +29,9 @@ app.use(express.json())
 const startApp = async () => {
   await connectDB()
 
-  kvadrociklyBot.start({
-    allowed_updates: ['message', 'callback_query'],
-  });
-  minitractoryBot.start({
-    allowed_updates: ['message', 'callback_query']
-  });
-  snegohodyBot.start({
-    allowed_updates: ['message', 'callback_query']
-  });
+  kvadrociklyBot.start();
+  minitractoryBot.start();
+  snegohodyBot.start();
 
   adminBot.start();
 }

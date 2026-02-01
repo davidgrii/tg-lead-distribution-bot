@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express";
 import type {ICartLead, ISpectechnikiRequest} from "../../types.js";
 import ClientsModel from "../../models/client.model.js";
-import {adminBot} from "../../bot.js";
+import {kvadrociklyBot} from "../../bot.js";
 import {CHANNELS_KVADROCIKLY} from "../../constants.js";
 import {
   getCartLeadData, getCartLeadProductsData,
@@ -65,7 +65,7 @@ router.post(
 ${leadData}
   `
 
-    const { message_id } = await adminBot.api.sendMessage(
+    const { message_id } = await kvadrociklyBot.api.sendMessage(
       channelId,
       message,
       {
@@ -151,7 +151,7 @@ ${productsLeadData}
 
   `
 
-    const { message_id } = await adminBot.api.sendMessage(
+    const { message_id } = await kvadrociklyBot.api.sendMessage(
       channelId,
       message,
       {
