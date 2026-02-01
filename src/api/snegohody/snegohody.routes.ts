@@ -38,9 +38,11 @@ router.post(
       $or: orConditions
     })
 
-    let channelId = duplicatedLead
-      ? duplicatedLead.channel_id
-      : await getNextChannel('snegohody', CHANNELS_SNEGOHODY)
+    // let channelId = duplicatedLead
+    //   ? duplicatedLead.channel_id
+    //   : await getNextChannel('snegohody', CHANNELS_SNEGOHODY)
+
+    let channelId = CHANNELS_SNEGOHODY[0]
 
     if (!client) {
       await ClientsModel.create({
@@ -114,9 +116,7 @@ router.post(
       $or: orConditions
     })
 
-    let channelId = duplicatedLead
-      ? duplicatedLead.channel_id
-      : await getNextChannel('snegohody', CHANNELS_SNEGOHODY)
+    let channelId = CHANNELS_SNEGOHODY[0]
 
     if (!client) {
       await ClientsModel.create({
