@@ -69,10 +69,7 @@ export const setupSnegohodyCommands = (bot: Bot) => {
 
     if (!relatedLead) {
       await ctx.api.sendMessage(channelId, message, {
-        parse_mode: 'HTML',
-        reply_markup: {
-          remove_keyboard: true
-        }
+        parse_mode: 'HTML'
       })
 
       await ctx.api.forwardMessage(
