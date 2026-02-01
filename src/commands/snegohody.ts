@@ -51,9 +51,7 @@ export const setupSnegohodyCommands = (bot: Bot) => {
       currentContactMethod = relatedLead?.telegram_username || ''
     }
 
-    let channelId = relatedLead
-      ? relatedLead.channel_id
-      : await getNextChannel('snegohody', CHANNELS_SNEGOHODY)
+    let channelId = CHANNELS_SNEGOHODY[0]
 
     const message = `
 
@@ -110,7 +108,7 @@ export const setupSnegohodyCommands = (bot: Bot) => {
     const chat = ctx.chat;
     const message = ctx.callbackQuery.message;
 
-    if (!chat || !message) return console.log('NO CHAT OR MESSAGE');
+    if (!chat || !message) return;
 
     const keyboard = new InlineKeyboard()
       .text('🔴  НЕТ КОНТАКТА  🔴', 'status:NO_CONTACT_LOCKED');
@@ -126,16 +124,11 @@ export const setupSnegohodyCommands = (bot: Bot) => {
     await ctx.answerCallbackQuery({text: '🔴  Статус: Нет контакта  🔴'});
   })
 
-  bot.callbackQuery(/^status:/, async (ctx) => {
-    console.log('CALLBACK:', ctx.callbackQuery.data);
-    await ctx.answerCallbackQuery();
-  });
-
   bot.callbackQuery('status:CONTACTED', async (ctx) => {
     const chat = ctx.chat;
     const message = ctx.callbackQuery.message;
 
-    if (!chat || !message) return console.log('NO CHAT OR MESSAGE');
+    if (!chat || !message) return;
     const keyboard = new InlineKeyboard()
       .text('🟢  СВЯЗАЛСЯ  🟢', 'status:CONTACTED_LOCKED');
 
