@@ -18,7 +18,7 @@ export const setupKvadrociklyCommands = (bot: Bot) => {
 `;
 
     const keyboard = new Keyboard()
-      .requestContact('☎️  ПОДЕЛИТЬСЯ КОНТАКТОМ  ☎️')
+      .requestContact('✅  ПОЛУЧИТЬ СЕЙЧАС  ✅')
       .resized()
       .oneTime();
 
