@@ -55,7 +55,9 @@ export const getCartLeadData = (lead: ICartLead) => {
 }
 
 export const getCartLeadProductsData = (lead: ICartLead) => {
-  return Object.entries(lead?.payment?.products[0])
+  if (!lead || !lead.payment) return []
+
+  return Object.entries(lead?.payment?.products?.[0])
     .map(([key, value], index) => {
       if (key === 'img') return null
 
