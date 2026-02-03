@@ -1,5 +1,7 @@
 import type {ICartLead, ILeadData} from "./types.js";
 import LeadsModel from "./models/leads.model.js";
+import ChannelCounterModel from "./models/channel-counter.model.js";
+import ChannelCounter from "./models/channel-counter.model.js";
 
 export const getContactMethod = (lead: Pick<ILeadData, 'Telegram' | 'Whatsapp' | 'Телефон'>) => {
   return (lead?.Telegram && 'Telegram') || (lead?.Whatsapp && 'Whatsapp') || 'Телефон'
@@ -16,20 +18,13 @@ export const getNextChannel = async (
   category: 'kvadrocikly' | 'snegohody' | 'minitraktory',
   channels: string[]
 ) => {
-  const lastLead = await LeadsModel.findOne({category})
-    .sort({createdAt: -1})
+  const counter = await ChannelCounter.findOneAndUpdate(
+    { category },
+    { $inc: { index: 1 } },
+    { new: true, upsert: true }
+  )
 
-  if (!lastLead) {
-    return channels[0]
-  }
-
-  const lastIndex = channels.indexOf(lastLead.channel_id)
-
-  if (lastIndex === -1) {
-    return channels[0]
-  }
-
-  return channels[(lastIndex + 1) % channels.length]
+  return channels[counter.index % channels.length]
 }
 
 export const getLeadData = (lead: ILeadData) => {

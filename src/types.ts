@@ -1,4 +1,8 @@
 
+export interface IChannelCounter{
+  index: number
+  category: 'kvadrocikly' | 'snegohody' | 'minitraktory'
+}
 export interface IClientModel {
   name: string
   contact_method: TMessenger
