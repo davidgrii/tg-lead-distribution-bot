@@ -1,7 +1,7 @@
 import {type Bot, Context, InlineKeyboard, Keyboard} from "grammy";
 import LeadsModel from "../models/leads.model.js";
 import {CHANNELS_MINITRAKTORY, TG_CHANNEL_MINITRAKTORY_URL} from "../constants.js";
-import {getNextChannel} from "../utils.js";
+import {getLastChannel} from "../utils.js";
 
 export const setupMinitractoryCommands = (bot: Bot) => {
   bot.command('start', async (ctx: Context) => {
@@ -32,21 +32,25 @@ export const setupMinitractoryCommands = (bot: Bot) => {
     const username = ctx.from?.username ? `@${ctx.from.username}` : ''
 
     let relatedLead = null;
-    let currentContactMethod = ''
+    let currentContactMethod = contactPhone || username
 
     if (contactPhone) {
-      relatedLead = await LeadsModel.findOne({ phone: contactPhone, category: 'minitraktory'})
+      relatedLead = await LeadsModel.findOne({ phone: contactPhone, category: 'minitraktory'}).sort({ createdAt: -1 })
       currentContactMethod = relatedLead?.phone || ''
     }
 
     if (!relatedLead && username) {
-      relatedLead = await LeadsModel.findOne({ telegram_username: username, category: 'minitraktory'})
+      relatedLead = await LeadsModel.findOne({ telegram_username: username, category: 'minitraktory'}).sort({ createdAt: -1 })
       currentContactMethod = relatedLead?.telegram_username || ''
     }
 
-    let channelId = relatedLead
-      ? relatedLead.channel_id
-      : await getNextChannel("minitraktory", CHANNELS_MINITRAKTORY)
+    let channelId: string
+
+    if (relatedLead) {
+      channelId = relatedLead.channel_id
+    } else {
+      channelId = await getLastChannel("minitraktory", CHANNELS_MINITRAKTORY)
+    }
 
     const message = `
 

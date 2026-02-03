@@ -27,6 +27,19 @@ export const getNextChannel = async (
   return channels[counter.index % channels.length]
 }
 
+export const getLastChannel = async (
+  category: 'kvadrocikly' | 'snegohody' | 'minitraktory',
+  channels: string[]
+) => {
+  const counter = await ChannelCounter.findOne({ category })
+
+  if (!counter) {
+    return channels[0]
+  }
+
+  return channels[counter.index % channels.length]
+}
+
 export const getLeadData = (lead: ILeadData) => {
   return Object.entries(lead)
     .map(([key, value], index) => {

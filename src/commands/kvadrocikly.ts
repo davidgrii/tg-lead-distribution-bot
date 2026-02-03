@@ -1,7 +1,7 @@
 import {type Bot, Context, InlineKeyboard, Keyboard} from "grammy";
 import LeadsModel from "../models/leads.model.js";
 import {CHANNELS_KVADROCIKLY, TG_CHANNEL_KVADROCIKLY_URL} from "../constants.js";
-import {getNextChannel} from "../utils.js";
+import {getLastChannel, getNextChannel} from "../utils.js";
 
 export const setupKvadrociklyCommands = (bot: Bot) => {
   bot.command('start', async (ctx: Context) => {
@@ -32,21 +32,25 @@ export const setupKvadrociklyCommands = (bot: Bot) => {
     const username = ctx.from?.username ? `@${ctx.from.username}` : ''
 
     let relatedLead = null;
-    let currentContactMethod = ''
+    let currentContactMethod = contactPhone || username
 
     if (contactPhone) {
-      relatedLead = await LeadsModel.findOne({ phone: contactPhone, category: 'kvadrocikly' })
+      relatedLead = await LeadsModel.findOne({ phone: contactPhone, category: 'kvadrocikly' }).sort({ createdAt: -1 })
       currentContactMethod = relatedLead?.phone || ''
     }
 
     if (!relatedLead && username) {
-      relatedLead = await LeadsModel.findOne({ telegram_username: username, category: 'kvadrocikly' })
+      relatedLead = await LeadsModel.findOne({ telegram_username: username, category: 'kvadrocikly' }).sort({ createdAt: -1 })
       currentContactMethod = relatedLead?.telegram_username || ''
     }
 
-    let channelId = relatedLead
-      ? relatedLead.channel_id
-      : await getNextChannel("kvadrocikly", CHANNELS_KVADROCIKLY)
+    let channelId: string
+
+    if (relatedLead) {
+      channelId = relatedLead.channel_id
+    } else {
+      channelId = await getLastChannel("kvadrocikly", CHANNELS_KVADROCIKLY)
+    }
 
     const message = `
 
