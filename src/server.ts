@@ -18,7 +18,6 @@ app.use(
     origin: [
       '*'
       // 'http://localhost:3004',
-      // 'request-manager-jcb7.onrender.com',
     ],
     // credentials: true
   })

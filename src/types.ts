@@ -22,7 +22,7 @@ export interface ISpectechnikiRequest extends ILeadData {
   Мощность: string
   Тип_двигателя: string
   Трансмисиия: string
-  Какой_бюджет_вы_рассматриваете_рублей: string
+  Какой_бюджет_вы_рассматриваете: string
   Бренды_да_или_нет: string
 }
 
