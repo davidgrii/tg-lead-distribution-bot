@@ -1,4 +1,4 @@
-# tg-requests-bot-manager
+# tg-lead-distribution-bot
 
 A Telegram bot system for automated lead routing from multiple websites to dedicated manager channels, with round-robin distribution, status tracking, and Excel export.
 
